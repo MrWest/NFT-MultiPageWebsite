@@ -1,4 +1,5 @@
 import React from "react";
+import NFTItems from "./NFTItems";
 
 function Home() {
   return (
@@ -21,6 +22,9 @@ function Home() {
               type and scrambled it to make a type specimen book.
             </p>
           </div>
+        </div>
+        <div class="col-lg-12">
+          <NFTItems />
         </div>
       </div>
     </div>
