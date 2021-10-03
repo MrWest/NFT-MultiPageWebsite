@@ -1,9 +1,17 @@
-import { Button } from "antd";
+
 import React from "react";
-// import { useThemeSwitcher } from "react-css-theme-switcher";
+import { Button } from "antd";
+import { useUserAddress, useUserProvider } from "eth-hooks";
+import { Web3Provider } from "@ethersproject/providers";
+import { useExchangePrice } from "../hooks";
+import WalletConnectProvider from "@walletconnect/web3-provider";
+import { useDispatch, useSelector } from 'react-redux';
 import Address from "./Address";
 import Balance from "./Balance";
 import Wallet from "./Wallet";
+import Web3Modal from "web3modal";
+import { INFURA_ID } from "../constants";
+import { LOGIN } from "../actions/types";
 
 /*
   ~ What it does? ~
@@ -39,18 +47,54 @@ import Wallet from "./Wallet";
               (ex. by default "https://etherscan.io/" or for xdai "https://blockscout.com/poa/xdai/")
 */
 
+
+/*
+  Web3 modal helps us "connect" external wallets:
+*/
+const web3Modal = new Web3Modal({
+  // network: "mainnet", // optional
+  cacheProvider: true, // optional
+  providerOptions: {
+    walletconnect: {
+      package: WalletConnectProvider, // required
+      options: {
+        infuraId: INFURA_ID,
+      },
+    },
+  },
+});
+
+const logoutOfWeb3Modal = async () => {
+  await web3Modal.clearCachedProvider();
+  setTimeout(() => {
+    window.location.reload();
+  }, 1);
+};
+
+
 export default function Account({
-  address,
-  userProvider,
-  localProvider,
-  mainnetProvider,
-  price,
-  minimized,
-  web3Modal,
-  loadWeb3Modal,
-  logoutOfWeb3Modal,
-  blockExplorer,
+  minimized
 }) {
+  const { localProvider, injectedProvider, targetNetwork, mainnetProvider, blockExplorer } = useSelector(state => state.networkReducer);
+  // Use your injected provider from 🦊 Metamask or if you don't have it then instantly generate a 🔥 burner wallet.
+  const userProvider = useUserProvider(injectedProvider, localProvider);
+
+  /* 💵 This hook will get the price of ETH from 🦄 Uniswap: */
+  const price = useExchangePrice(targetNetwork, mainnetProvider);
+  
+  // Use your injected provider from 🦊 Metamask or if you don't have it then instantly generate a 🔥 burner wallet.
+ console.log('shit: ', injectedProvider);
+  const address = useUserAddress(userProvider);
+  console.log('crap: ', address);
+  const dispatch = useDispatch();
+  const loadWeb3Modal = async () => {
+    const provider = await web3Modal.connect();
+    dispatch({
+      type: LOGIN,
+      payload: new Web3Provider(provider)
+    });
+  };
+
   const modalButtons = [];
   if (web3Modal) {
     if (web3Modal.cachedProvider) {

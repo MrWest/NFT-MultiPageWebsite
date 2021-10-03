@@ -1,9 +1,15 @@
 import React from "react";
+import { Provider } from 'react-redux';
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import { Navigation, Footer, Home, About, Contact } from "./components";
+import { initializeStore } from './store';
+
+const store = initializeStore({});
+
 function App() {
   return (
     <div className="App">
+      <Provider store={store}>
       <Router>
         <Navigation />
         <Switch>
@@ -13,6 +19,7 @@ function App() {
         </Switch>
         <Footer />
       </Router>
+      </Provider>
     </div>
   );
 }
