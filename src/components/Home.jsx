@@ -24,7 +24,7 @@ function Home() {
           </div>
         </div>
         <div class="col-lg-12">
-          <NFTItems />
+          {/* <NFTItems /> */}
         </div>
       </div>
     </div>

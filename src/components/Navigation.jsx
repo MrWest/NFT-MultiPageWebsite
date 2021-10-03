@@ -43,7 +43,7 @@ function Navigation(props) {
             </ul>
           </div>
           <div>
-            <Account />
+            {/* <Account /> */}
           </div>
         </div>
       </nav>

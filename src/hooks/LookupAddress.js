@@ -23,6 +23,7 @@ const lookupAddress = async (provider, address) => {
     try {
       // Accuracy of reverse resolution is not enforced.
       // We then manually ensure that the reported ens name resolves to address
+      console.log('shit', provider, address);
       const reportedName = await provider.lookupAddress(address);
 
       const resolvedAddress = await provider.resolveName(reportedName);
@@ -32,6 +33,7 @@ const lookupAddress = async (provider, address) => {
       }
       return getAddress(address);
     } catch (e) {
+      alert('here 3');
       return getAddress(address);
     }
   }

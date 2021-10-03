@@ -1,18 +1,12 @@
 
 import React, { useCallback, useEffect, useState } from "react";
-import { StaticJsonRpcProvider, Web3Provider } from "@ethersproject/providers";
-import { formatEther, parseEther } from "@ethersproject/units";
-import { BigNumber } from "@ethersproject/bignumber";
-import WalletConnectProvider from "@walletconnect/web3-provider";
 import { Alert, Button, Card, Col, Input, List, Menu, Row } from "antd";
 import "antd/dist/antd.css";
 import { useUserAddress } from "eth-hooks";
 import { useSelector } from 'react-redux';
-import Web3Modal from "web3modal";
 import Address from './Address';
 import AddressInput from './AddressInput';
 import Sell from './Sell';
-import { DAI_ABI, DAI_ADDRESS, INFURA_ID, NETWORK, NETWORKS } from "../constants";
 import { Transactor } from "../helpers";
 import {
 useBalance,

@@ -83,9 +83,7 @@ export default function Account({
   const price = useExchangePrice(targetNetwork, mainnetProvider);
   
   // Use your injected provider from 🦊 Metamask or if you don't have it then instantly generate a 🔥 burner wallet.
- console.log('shit: ', injectedProvider);
   const address = useUserAddress(userProvider);
-  console.log('crap: ', address);
   const dispatch = useDispatch();
   const loadWeb3Modal = async () => {
     const provider = await web3Modal.connect();
