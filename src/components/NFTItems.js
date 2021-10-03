@@ -6,8 +6,6 @@ import { Alert, Button, Card, Col, Input, List, Menu, Row } from "antd";
 import "antd/dist/antd.css";
 import { useUserAddress } from "eth-hooks";
 import React, { useCallback, useEffect, useState } from "react";
-import ReactJson from "react-json-view";
-import { BrowserRouter, Link, Route, Switch } from "react-router-dom";
 import Web3Modal from "web3modal";
 import Address from './Address';
 import AddressInput from './AddressInput';
@@ -55,24 +53,6 @@ const targetNetwork = NETWORKS.ropsten; // <------- select your target frontend 
 
 // 😬 Sorry for all the console logging
 const DEBUG = true;
-
-// EXAMPLE STARTING JSON:
-const STARTING_JSON = {
-  description: "It's actually a bison?",
-  external_url: "https://austingriffith.com/portfolio/paintings/", // <-- this can link to a page for the specific file too
-  image: "https://austingriffith.com/images/paintings/buffalo.jpg",
-  name: "Buffalo",
-  attributes: [
-    {
-      trait_type: "BackgroundColor",
-      value: "green",
-    },
-    {
-      trait_type: "Eyes",
-      value: "googly",
-    },
-  ],
-};
 
 // helper function to "Get" from IPFS
 // you usually go content.toString() after this...
@@ -181,16 +161,16 @@ const NFTItems = () => {
     });
   
     // Then read your DAI balance like:
-    const myMainnetDAIBalance = useContractReader({ DAI: mainnetDAIContract }, "DAI", "balanceOf", [
-      "0x34aA3F359A9D614239015126635CE7732c18fDF3",
-    ]);
+    // const myMainnetDAIBalance = useContractReader({ DAI: mainnetDAIContract }, "DAI", "balanceOf", [
+    //   "0x34aA3F359A9D614239015126635CE7732c18fDF3",
+    // ]);
   
     // keep track of a variable from the contract in the local React state:
     const balance = useContractReader(readContracts, "YourCollectible", "balanceOf", [address]);
     console.log("🤗 balance:", balance);
     // 📟 Listen for broadcast events
-    const transferEvents = useEventListener(readContracts, "YourCollectible", "Transfer", localProvider, 1);
-    console.log("📟 Transfer events:", transferEvents);
+    // const transferEvents = useEventListener(readContracts, "YourCollectible", "Transfer", localProvider, 1);
+    // console.log("📟 Transfer events:", transferEvents);
   
     //
     // 🧠 This effect will update yourCollectibles by polling when your balance changes

@@ -1,5 +1,6 @@
 import React from "react";
 import { Link, withRouter } from "react-router-dom";
+import Account from "./Account";
 
 function Navigation(props) {
   return (
@@ -40,6 +41,9 @@ function Navigation(props) {
                 </Link>
               </li>
             </ul>
+          </div>
+          <div>
+            <Account />
           </div>
         </div>
       </nav>
