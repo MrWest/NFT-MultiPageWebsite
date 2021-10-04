@@ -8,8 +8,9 @@ export default function Sell(props) {
   const [sellForEthValue, setSellForEthValue] = React.useState();
   const buttons = (
     <Tooltip placement="right" title="* 10 ** 18">
-      <div
-        type="dashed"
+      <span
+        role="img"
+        aria-label="* 10 ** 18"
         style={{ cursor: "pointer" }}
         onClick={async () => {
           try {
@@ -20,7 +21,7 @@ export default function Sell(props) {
         }}
       >
         ✴️
-      </div>
+      </span>
     </Tooltip>
   );
   return (

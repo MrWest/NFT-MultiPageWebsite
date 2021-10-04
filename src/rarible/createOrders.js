@@ -1,5 +1,6 @@
-import { utils } from "ethers";
-import { sign, getMessageHash } from "./order";
+// import { utils } from "ethers";
+// import { sign, getMessageHash } from "./order";
+import { sign } from "./order";
 
 const random = (min, max) => Math.floor(Math.random() * (max - min)) + min;
 

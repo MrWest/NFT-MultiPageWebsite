@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState } from "react";
-import { Alert, Button, Card, Col, Input, List, Menu, Row } from "antd";
+import { Button, Card, List } from "antd";
 import "antd/dist/antd.css";
 import { useUserAddress } from "eth-hooks";
 import { useSelector } from 'react-redux';
@@ -119,7 +119,7 @@ const NFTItems = () => {
         setYourCollectibles(collectibleUpdate);
       };
       updateYourCollectibles();
-    }, [address, yourBalance]);
+    }, [address, balance, readContracts.YourCollectible, yourBalance]);
   
    
   

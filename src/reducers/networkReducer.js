@@ -1,8 +1,6 @@
 import { StaticJsonRpcProvider } from '@ethersproject/providers';
-import { useUserAddress, useUserProvider } from 'eth-hooks';
 import { LOGOUT, LOGIN } from '../actions/types';
 import { INFURA_ID, NETWORKS } from '../constants';
-import { useExchangePrice, useGasPrice } from '../hooks';
 
 // 😬 Sorry for all the console logging
 const DEBUG = true;
