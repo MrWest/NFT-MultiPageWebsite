@@ -60,57 +60,66 @@ export default function Address(props) {
   }
 
   const etherscanLink = blockExplorerLink(address, props.blockExplorer);
-  if (props.minimized) {
-    return (
-      <span style={{ verticalAlign: "middle" }}>
-        <a
-          style={{ color: "#222222" }} //currentTheme === "light" ? "#222222" : "#ddd" }}
-          target="_blank"
-          href={etherscanLink}
-          rel="noopener noreferrer"
-        >
-          <Blockies seed={address.toLowerCase()} size={8} scale={2} />
-        </a>
-      </span>
-    );
-  }
+  // if (props.minimized) {
+  //   return (
+  //     <span style={{ verticalAlign: "middle" }}>
+  //       <a
+  //         style={{ color: "#aaa" }} //currentTheme === "light" ? "#222222" : "#ddd" }}
+  //         target="_blank"
+  //         href={etherscanLink}
+  //         rel="noopener noreferrer"
+  //       >
+  //         <Blockies seed={address.toLowerCase()} size={4} scale={1} />
+  //       </a>
+  //     </span>
+  //   );
+  // }
 
-  let text;
-  if (props.onChange) {
-    text = (
-      <Text editable={{ onChange: props.onChange }} copyable={{ text: address }}>
-        <a
-          style={{ color: "#222222" }} //currentTheme === "light" ? "#222222" : "#ddd" }}
-          target="_blank"
-          href={etherscanLink}
-          rel="noopener noreferrer"
-        >
-          {displayAddress}
-        </a>
-      </Text>
-    );
-  } else {
-    text = (
-      <Text copyable={{ text: address }}>
-        <a
-          style={{ color: "#222222" }} //currentTheme === "light" ? "#222222" : "#ddd" }}
-          target="_blank"
-          href={etherscanLink}
-          rel="noopener noreferrer"
-        >
-          {displayAddress}
-        </a>
-      </Text>
-    );
-  }
+  // let text;
+  // if (props.onChange) {
+  //   text = (
+  //     <Text editable={{ onChange: props.onChange }} copyable={{ text: address }}>
+  //       <a
+  //         style={{ color: "#aaa" }} //currentTheme === "light" ? "#222222" : "#ddd" }}
+  //         target="_blank"
+  //         href={etherscanLink}
+  //         rel="noopener noreferrer"
+  //       >
+  //         {displayAddress}
+  //       </a>
+  //     </Text>
+  //   );
+  // } else {
+  //   text = (
+  //     <Text copyable={{ text: address }}>
+  //       <a
+  //         style={{ color: "#aaa" }} //currentTheme === "light" ? "#222222" : "#ddd" }}
+  //         target="_blank"
+  //         href={etherscanLink}
+  //         rel="noopener noreferrer"
+  //       >
+  //         {displayAddress}
+  //       </a>
+  //     </Text>
+  //   );
+  // }
 
   return (
     <span>
       <span style={{ verticalAlign: "middle" }}>
-        <Blockies seed={address.toLowerCase()} size={8} scale={props.fontSize ? props.fontSize / 7 : 4} />
+        <Blockies seed={address.toLowerCase()} size={4} scale={4} />
       </span>
-      <span style={{ verticalAlign: "middle", paddingLeft: 5, fontSize: props.fontSize ? props.fontSize : 28 }}>
-        {text}
+      <span style={{ verticalAlign: "middle", paddingLeft: 5, fontSize: 16 }}>
+        <Text copyable={{ text: address }} className="copyicon">
+          <a
+            style={{ color: "#aaa", fontSize: 16 }} //currentTheme === "light" ? "#222222" : "#ddd" }}
+            target="_blank"
+            href={etherscanLink}
+            rel="noopener noreferrer"
+            >
+            {displayAddress}
+          </a>
+        </Text>
       </span>
     </span>
   );

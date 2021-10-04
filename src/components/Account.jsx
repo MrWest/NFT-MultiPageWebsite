@@ -94,7 +94,7 @@ return (
       provider={userProvider}
       ensProvider={mainnetProvider}
       price={price}
-      // color={currentTheme === "light" ? "#1890ff" : "#2caad9"}
+      color="#afa"
     />
   </span>
 );
@@ -166,9 +166,9 @@ export default function Account() {
     <NetworkInfo localProvider={localProvider} 
     userProvider={userProvider} targetNetwork={targetNetwork}
     mainnetProvider={mainnetProvider} blockExplorer={blockExplorer} />
-    <ConnectionButton text="logout" onClick={logoutOfWeb3Modal} />
+    <ConnectionButton text="Logout" onClick={logoutOfWeb3Modal} />
     </> :
-    <ConnectionButton  text="connect" onClick={loadWeb3Modal} />
+    <ConnectionButton  text="Connect" onClick={loadWeb3Modal} />
     }
     </div>
   );
