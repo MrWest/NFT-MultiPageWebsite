@@ -17,7 +17,7 @@ const DOMAIN_TYPE = [
   }
 ];
 
-module.exports = {
+const EIP712 = {
   createTypeData: function (domainData, primaryType, message, types) {
     return {
       types: Object.assign({
@@ -45,3 +45,5 @@ module.exports = {
     };
   }
 };
+
+export default EIP712;
