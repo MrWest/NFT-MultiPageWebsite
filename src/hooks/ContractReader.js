@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import useOnBlock from "./OnBlock";
 import usePoller from "./Poller";
 
-const DEBUG = false;
+const DEBUG = true;
 
 /*
   ~ What it does? ~
@@ -41,7 +41,7 @@ export default function useContractReader(contracts, contractName, functionName,
   const updateValue = async () => {
     try {
       let newValue;
-      if (DEBUG) console.log("CALLING ", contractName, functionName, "with args", args);
+      if (DEBUG) console.log("CALLING ", contracts, contractName, functionName, "with args", args);
       if (args && args.length > 0) {
         newValue = await contracts[contractName][functionName](...args);
         if (DEBUG)

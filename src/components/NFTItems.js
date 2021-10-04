@@ -56,7 +56,7 @@ const NFTItems = () => {
    
   
     // Load in your local 📝 contract and read a value from it:
-    const readContracts = useContractLoader(localProvider);
+    const readContracts = useContractLoader(userProvider);
   
     // If you want to make 🔐 write transactions to your contracts, use the userProvider:
     const writeContracts = useContractLoader(userProvider);
