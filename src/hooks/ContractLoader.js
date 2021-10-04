@@ -27,12 +27,12 @@ import { useEffect, useState } from "react";
 
 const loadContract = (contractName, signer) => {
   const newContract = new Contract(
-    require(`../contracts/${contractName}.address.js`),
-    require(`../contracts/${contractName}.abi.js`),
+    require(`../contracts/${contractName}.address.js`).default,
+    require(`../contracts/${contractName}.abi.js`).default,
     signer,
   );
   try {
-    newContract.bytecode = require(`../contracts/${contractName}.bytecode.js`);
+    newContract.bytecode = require(`../contracts/${contractName}.bytecode.js`).default;
   } catch (e) {
     console.log(e);
   }
@@ -58,7 +58,7 @@ export default function useContractLoader(providerOrSigner) {
             signer = providerOrSigner;
           }
 
-          const contractList = require("../contracts/contracts.js");
+          const contractList = require("../contracts/contracts.js").default;
 
           const newContracts = contractList.reduce((accumulator, contractName) => {
             accumulator[contractName] = loadContract(contractName, signer);

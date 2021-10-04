@@ -38,9 +38,9 @@ export default function useCustomContractLoader(provider, contractName, address)
             signer = provider;
           }
 
-          const customContract = new Contract(address, require(`../contracts/${contractName}.abi.js`), signer);
+          const customContract = new Contract(address, require(`../contracts/${contractName}.abi.js`).default, signer);
           try {
-            customContract.bytecode = require(`../contracts/${contractName}.bytecode.js`);
+            customContract.bytecode = require(`../contracts/${contractName}.bytecode.js`).default;
           } catch (e) {
             console.log(e);
           }

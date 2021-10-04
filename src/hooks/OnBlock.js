@@ -22,11 +22,11 @@ export default function useOnBlock(provider, fn, args) {
           savedCallback.current();
         }
       };
-
-      provider.on("block", listener);
+      
+      provider.on && provider.on("block", listener);
 
       return () => {
-        provider.off("block", listener);
+        provider.off && provider.off("block", listener);
       };
     }
   }, [args, fn, provider]);

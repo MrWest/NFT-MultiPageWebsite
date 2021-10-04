@@ -1,5 +1,5 @@
 
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Button, Card, List } from "antd";
 import "antd/dist/antd.css";
 import { useUserAddress } from "eth-hooks";
@@ -86,40 +86,41 @@ const NFTItems = () => {
     //
     // 🧠 This effect will update yourCollectibles by polling when your balance changes
     //
-    const yourBalance = balance && balance.toNumber && balance.toNumber();
+    // const yourBalance = balance && balance.toNumber && balance.toNumber();
     const [yourCollectibles, setYourCollectibles] = useState();
-  
-    useEffect(() => {
-      const updateYourCollectibles = async () => {
-        const collectibleUpdate = [];
-        for (let tokenIndex = 0; tokenIndex < balance; tokenIndex++) {
+
+    const updateYourCollectibles = useCallback(async () => {
+      const collectibleUpdate = [];
+      for (let tokenIndex = 0; tokenIndex < balance; tokenIndex++) {
+        try {
+          console.log("GEtting token index", tokenIndex);
+          const tokenId = await readContracts.YourCollectible.tokenOfOwnerByIndex(address, tokenIndex);
+          console.log("tokenId", tokenId);
+          const tokenURI = await readContracts.YourCollectible.tokenURI(tokenId);
+          console.log("tokenURI", tokenURI);
+
+          const ipfsHash = tokenURI.replace("https://ipfs.io/ipfs/", "");
+          console.log("ipfsHash", ipfsHash);
+
+          const jsonManifestBuffer = await getFromIPFS(ipfsHash);
+
           try {
-            console.log("GEtting token index", tokenIndex);
-            const tokenId = await readContracts.YourCollectible.tokenOfOwnerByIndex(address, tokenIndex);
-            console.log("tokenId", tokenId);
-            const tokenURI = await readContracts.YourCollectible.tokenURI(tokenId);
-            console.log("tokenURI", tokenURI);
-  
-            const ipfsHash = tokenURI.replace("https://ipfs.io/ipfs/", "");
-            console.log("ipfsHash", ipfsHash);
-  
-            const jsonManifestBuffer = await getFromIPFS(ipfsHash);
-  
-            try {
-              const jsonManifest = JSON.parse(jsonManifestBuffer.toString());
-              console.log("jsonManifest", jsonManifest);
-              collectibleUpdate.push({ id: tokenId, uri: tokenURI, owner: address, ...jsonManifest });
-            } catch (e) {
-              console.log(e);
-            }
+            const jsonManifest = JSON.parse(jsonManifestBuffer.toString());
+            console.log("jsonManifest", jsonManifest);
+            collectibleUpdate.push({ id: tokenId, uri: tokenURI, owner: address, ...jsonManifest });
           } catch (e) {
             console.log(e);
           }
+        } catch (e) {
+          console.log(e);
         }
-        setYourCollectibles(collectibleUpdate);
-      };
+      }
+      setYourCollectibles(collectibleUpdate);
+    }, [address, balance]);
+  
+    useEffect(() => {
       updateYourCollectibles();
-    }, [address, balance, readContracts.YourCollectible, yourBalance]);
+    }, [ updateYourCollectibles]);
   
    
   
@@ -142,7 +143,7 @@ const NFTItems = () => {
                         }
                       >
                         <div>
-                          <img src={item.image} style={{ maxWidth: 150 }} />
+                          <img alt="Your NFT" src={item.image} style={{ maxWidth: 150 }} />
                         </div>
                         <div>{item.description}</div>
                       </Card>

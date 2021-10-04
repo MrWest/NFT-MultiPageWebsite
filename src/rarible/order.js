@@ -1,6 +1,6 @@
 import {TypedDataUtils} from "eth-sig-util"
 import {bufferToHex} from "ethereumjs-util"
-const EIP712 = require("./EIP712");
+const EIP712 = require("./EIP712").default;
 
 // function AssetType(assetClass, data) {
 // 	return { assetClass, data }

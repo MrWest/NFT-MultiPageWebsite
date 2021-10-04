@@ -1,4 +1,4 @@
-const EIP712 = require("./EIP712");
+const EIP712 = require("./EIP712").default;
 
 const ERC721Types = {
 	Part: [
