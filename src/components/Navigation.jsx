@@ -1,7 +1,6 @@
 import React from "react";
 import { Link, withRouter } from "react-router-dom";
 import Account from "./Account";
-
 function Navigation(props) {
   return (
     <div className="navigation">
@@ -43,7 +42,7 @@ function Navigation(props) {
             </ul>
           </div>
           <div>
-            {/* <Account /> */}
+            <Account />
           </div>
         </div>
       </nav>

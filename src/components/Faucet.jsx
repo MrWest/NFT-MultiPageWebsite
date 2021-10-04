@@ -1,7 +1,7 @@
 import { SendOutlined } from "@ant-design/icons";
 import { parseEther } from "@ethersproject/units";
 import { Button, Input, Tooltip } from "antd";
-import { useLookupAddress } from "eth-hooks";
+import { useLookupAddress } from "../hooks";
 import React, { useCallback, useState } from "react";
 import Blockies from "react-blockies";
 import { Transactor } from "../helpers";

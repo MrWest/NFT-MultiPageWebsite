@@ -1,9 +1,9 @@
 
 import React from "react";
 import { Button } from "antd";
-import { useUserAddress, useUserProvider } from "eth-hooks";
+import { useUserAddress  } from "eth-hooks";
 import { Web3Provider } from "@ethersproject/providers";
-import { useExchangePrice } from "../hooks";
+import { useExchangePrice, useUserProvider  } from "../hooks";
 import WalletConnectProvider from "@walletconnect/web3-provider";
 import { useDispatch, useSelector } from 'react-redux';
 import Address from "./Address";
@@ -11,7 +11,7 @@ import Balance from "./Balance";
 import Wallet from "./Wallet";
 import Web3Modal from "web3modal";
 import { INFURA_ID } from "../constants";
-import { LOGIN } from "../actions/types";
+import { LOGIN, LOGOUT } from "../actions/types";
 
 /*
   ~ What it does? ~
@@ -64,26 +64,50 @@ const web3Modal = new Web3Modal({
   },
 });
 
-const logoutOfWeb3Modal = async () => {
-  await web3Modal.clearCachedProvider();
-  setTimeout(() => {
-    window.location.reload();
-  }, 1);
-};
 
+const ConnectionButton = ({onClick, text}) => ( <Button
+  style={{ verticalAlign: "top", marginLeft: 8, marginTop: 4 }}
+  shape="round"
+  size="large"
+  onClick={onClick}
+>
+  {text}
+</Button>);
 
-export default function Account({
-  minimized
-}) {
-  const { localProvider, injectedProvider, targetNetwork, mainnetProvider, blockExplorer } = useSelector(state => state.networkReducer);
+const NetworkInfo = ({ userProvider,localProvider, targetNetwork, mainnetProvider, blockExplorer }) =>  {
   // Use your injected provider from 🦊 Metamask or if you don't have it then instantly generate a 🔥 burner wallet.
-  const userProvider = useUserProvider(injectedProvider, localProvider);
-
+  const address =  useUserAddress(userProvider);
+  console.log('crap: ', userProvider, address);
+  //TODO ensure not to use useUserAddress(userProvider) without the provider being a connected valid provvider
   /* 💵 This hook will get the price of ETH from 🦄 Uniswap: */
   const price = useExchangePrice(targetNetwork, mainnetProvider);
-  
+return (
+  <span>
+    {address ? (
+      <Address address={address} ensProvider={mainnetProvider} blockExplorer={blockExplorer} />
+    ) : (
+      "Connecting..."
+    )}
+    <Balance address={address} provider={localProvider} price={price} />
+    <Wallet
+      address={address}
+      provider={userProvider}
+      ensProvider={mainnetProvider}
+      price={price}
+      // color={currentTheme === "light" ? "#1890ff" : "#2caad9"}
+    />
+  </span>
+);
+    };
+
+
+
+// "eth-hooks": "^2.3.9",
+export default function Account() {
+  const { logged, localProvider, injectedProvider, targetNetwork, mainnetProvider, blockExplorer } = useSelector(state => state.networkReducer);
   // Use your injected provider from 🦊 Metamask or if you don't have it then instantly generate a 🔥 burner wallet.
-  const address = useUserAddress(userProvider);
+  const userProvider = useUserProvider(injectedProvider,localProvider);
+  
   const dispatch = useDispatch();
   const loadWeb3Modal = async () => {
     const provider = await web3Modal.connect();
@@ -92,10 +116,20 @@ export default function Account({
       payload: new Web3Provider(provider)
     });
   };
+  const logoutOfWeb3Modal = async () => {
+    await web3Modal.clearCachedProvider();
+    dispatch({
+      type: LOGOUT,
+      payload: localProvider
+    });
+    // setTimeout(() => {
+    //   window.location.reload();
+    // }, 1);
+  };
 
   const modalButtons = [];
   if (web3Modal) {
-    if (web3Modal.cachedProvider) {
+    if (logged) {
       modalButtons.push(
         <Button
           key="logoutbutton"
@@ -125,30 +159,17 @@ export default function Account({
 
   // const { currentTheme } = useThemeSwitcher();
 
-  const display = minimized ? (
-    ""
-  ) : (
-    <span>
-      {address ? (
-        <Address address={address} ensProvider={mainnetProvider} blockExplorer={blockExplorer} />
-      ) : (
-        "Connecting..."
-      )}
-      <Balance address={address} provider={localProvider} price={price} />
-      <Wallet
-        address={address}
-        provider={userProvider}
-        ensProvider={mainnetProvider}
-        price={price}
-        // color={currentTheme === "light" ? "#1890ff" : "#2caad9"}
-      />
-    </span>
-  );
-
+  
   return (
     <div>
-      {display}
-      {modalButtons}
+    {logged ? <>
+    <NetworkInfo localProvider={localProvider} 
+    userProvider={userProvider} targetNetwork={targetNetwork}
+    mainnetProvider={mainnetProvider} blockExplorer={blockExplorer} />
+    <ConnectionButton text="logout" onClick={logoutOfWeb3Modal} />
+    </> :
+    <ConnectionButton  text="connect" onClick={loadWeb3Modal} />
+    }
     </div>
   );
 }

@@ -1,5 +1,5 @@
 
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Alert, Button, Card, Col, Input, List, Menu, Row } from "antd";
 import "antd/dist/antd.css";
 import { useUserAddress } from "eth-hooks";
@@ -9,14 +9,9 @@ import AddressInput from './AddressInput';
 import Sell from './Sell';
 import { Transactor } from "../helpers";
 import {
-useBalance,
 useContractLoader,
 useContractReader,
-useEventListener,
-useExchangePrice,
-useExternalContractLoader,
 useGasPrice,
-useOnBlock,
 useUserProvider,
 } from "../hooks";
 

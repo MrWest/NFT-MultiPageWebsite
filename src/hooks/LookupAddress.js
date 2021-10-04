@@ -33,7 +33,7 @@ const lookupAddress = async (provider, address) => {
       }
       return getAddress(address);
     } catch (e) {
-      alert('here 3');
+      alert(`here 3 ${address}`);
       return getAddress(address);
     }
   }

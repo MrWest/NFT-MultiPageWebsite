@@ -33,8 +33,7 @@ export default function Provider(props) {
         const newAddress = await newSigner.getAddress();
         setAddress(newAddress);
         // eslint-disable-next-line no-empty
-      } catch (e) {
-        alert('here 2');}
+      } catch (e) {}
     }
   }, 1377);
 

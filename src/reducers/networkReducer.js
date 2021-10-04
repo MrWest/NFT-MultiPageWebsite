@@ -15,6 +15,7 @@ const mainnetInfura = new StaticJsonRpcProvider("https://mainnet.infura.io/v3/" 
 const localProviderUrl = targetNetwork.rpcUrl;
 // as you deploy to other networks you can set REACT_APP_PROVIDER=https://dai.poa.network in packages/react-app/.env
 const localProviderUrlFromEnv = process.env.REACT_APP_PROVIDER ? process.env.REACT_APP_PROVIDER : localProviderUrl;
+console.log('deal: ', localProviderUrlFromEnv, process.env.REACT_APP_PROVIDER, localProviderUrl);
 if (DEBUG) console.log("🏠 Connecting to provider:", localProviderUrlFromEnv);
 const localProvider = new StaticJsonRpcProvider(localProviderUrlFromEnv);
 
@@ -25,15 +26,20 @@ const mainnetProvider = mainnetInfura;
 // 🔭 block explorer URL
 const blockExplorer = targetNetwork.blockExplorer;
 
-const NetworkReducer = (state = { localProvider, injectedProvider: localProvider, mainnetProvider, targetNetwork, blockExplorer }, action) => {
+const NetworkReducer = (state = { logged: false, localProvider, injectedProvider: localProvider, mainnetProvider, targetNetwork, blockExplorer }, action) => {
   switch (action.type) {
     case LOGOUT:
-      return action.payload;
+      return  {
+        ...state,
+        injectedProvider: action.payload,
+        logged: false
+      };
 
     case LOGIN:
       return {
         ...state,
-        injectedProvider: action.payload
+        injectedProvider: action.payload,
+        logged: true
       };
 
     default:
