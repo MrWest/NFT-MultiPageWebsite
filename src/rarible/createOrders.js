@@ -1,12 +1,12 @@
 // import { utils } from "ethers";
 // import { sign, getMessageHash } from "./order";
+import { createSellOrderEP, encodeOrderEP } from "../apis/endpoints";
 import { sign } from "./order";
 
 const random = (min, max) => Math.floor(Math.random() * (max - min)) + min;
 
 async function prepareOrderMessage(form) {
-  const raribleEncodeOrderUrl = "https://api-dev.rarible.com/protocol/v0.1/ethereum/order/encoder/order";
-  const res = await fetch(raribleEncodeOrderUrl, {
+  const res = await fetch(encodeOrderEP, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -14,13 +14,13 @@ async function prepareOrderMessage(form) {
     body: JSON.stringify(form),
   });
   const resJson = await res.json();
-  console.log({ resJson });
+  console.log('kkk3', { resJson });
   return resJson.signMessage;
 }
 
 function createERC721ForEthOrder(maker, contract, tokenId, price, salt) {
   return {
-    type: "RARIBLE_V2",
+    type: "RARIBLE_V1",
     maker: maker,
     make: {
       assetType: {
@@ -75,7 +75,7 @@ export const createSellOrder = async (type, provider, params) => {
   let order;
   let signature;
   const salt = random(1,1000)
-  console.log({params})
+  console.log('kkk1', {params});
   switch (type) {
     case "MAKE_ERC721_TAKE_ETH":
       order = createERC721ForEthOrder(
@@ -85,8 +85,8 @@ export const createSellOrder = async (type, provider, params) => {
         params.ethAmt,
         salt
       );
-      console.log({ order });
-      const preparedOrder = await prepareOrderMessage(order);
+      console.log('kkk2', { order });
+      const preparedOrder = await prepareOrderMessage({...order, signature: '0x45461654b86e856686e7a2e9a9213b29f8dc32a731046e0c2f1aa01e4eaa991e41ebc67535fac14c333ad5b0d0d821ef518edc9ed08ad7efc0af572620c045ce1c'});
       console.log({preparedOrder})
       signature = await sign(provider, preparedOrder, params.accountAddress);
 
@@ -96,8 +96,7 @@ export const createSellOrder = async (type, provider, params) => {
       break;
   }
 
-  const raribleOrderUrl = "https://api-dev.rarible.com/protocol/v0.1/ethereum/order/orders";
-  const raribleOrderResult = await fetch(raribleOrderUrl, {
+  const raribleOrderResult = await fetch(createSellOrderEP, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -134,7 +133,7 @@ export const matchSellOrder = async (sellOrder, params) => {
 };
 
 export async function prepareMatchingOrder(sellOrder, accountAddress) {
-  const rariblePrepareTxUrl = `https://api-dev.rarible.com/protocol/v0.1/ethereum/order/orders/${sellOrder.hash}/prepareTx`
+  const rariblePrepareTxUrl = `${createSellOrderEP}/${sellOrder.hash}/prepareTx`
   const res = await fetch(rariblePrepareTxUrl, {
     method: "POST",
     headers: {

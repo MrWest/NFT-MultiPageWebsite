@@ -41,7 +41,7 @@ export default function Sell(props) {
           />
           <Button
             style={{...props.style, marginTop: 4, minWidth: '60%' }}
-            onClick={() =>
+            onClick={() => 
               createSellOrder("MAKE_ERC721_TAKE_ETH", props.provider, {
                 accountAddress: props.accountAddress,
                 makeERC721Address: props.ERC721Address,

@@ -6,6 +6,7 @@ import { useContractLoader, useGasPrice } from "../hooks";
 import { useSelector } from "react-redux";
 import styles from './styles/RaribleItemIndexer';
 import { Transactor } from "../helpers";
+import { getNFTItemsEP } from "../apis/endpoints";
 
 const useStyles = makeStyles(styles);
 
@@ -53,7 +54,7 @@ export default function RaribleItemIndexer(props) {
         shape="round"
         type="primary"
         onClick={async () => {
-                const getItemMetaByIdUrl = `https://api-dev.rarible.com/protocol/v0.1/ethereum/nft/items/${collectionContract}:${tokenId}/meta`;
+                const getItemMetaByIdUrl = `${getNFTItemsEP}/${collectionContract}:${tokenId}/meta`;
                 setDownloading(true);
                 const getItemMetaResult = await fetch(getItemMetaByIdUrl);
                 const metaResultJson = await getItemMetaResult.json();
