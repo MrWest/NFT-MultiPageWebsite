@@ -1,6 +1,6 @@
 import React from "react";
 import { Button, Input, List, Card } from "antd";
-import {AddressInput, Sell} from '.'
+import {AddressInput, Sell} from './index'
 
 export default function RaribleItemIndexer(props) {
   const [collectionContract, setCollectionContract] = React.useState();

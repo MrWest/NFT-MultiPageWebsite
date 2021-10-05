@@ -1,9 +1,9 @@
 
 import React, { useCallback, useEffect, useState } from "react";
-import { Button, Card, List } from "antd";
+import { Button } from "antd";
 import "antd/dist/antd.css";
 import { useUserAddress } from "eth-hooks";
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import Address from './Address';
 import AddressInput from './AddressInput';
 import Sell from './Sell';
@@ -14,8 +14,13 @@ useContractReader,
 useGasPrice,
 useUserProvider,
 } from "../hooks";
+import { LOAD_COLLECTIBLES } from "../actions/types";
+import { Grid, makeStyles, Paper } from "@material-ui/core";
+import styles from './styles/NFTItems';
 
-  const { BufferList } = require("bl");
+const useStyles = makeStyles(styles);
+
+const { BufferList } = require("bl");
 // https://www.npmjs.com/package/ipfs-http-client
 const ipfsAPI = require("ipfs-http-client");
 
@@ -61,39 +66,25 @@ const NFTItems = () => {
     // If you want to make 🔐 write transactions to your contracts, use the userProvider:
     const writeContracts = useContractLoader(userProvider);
   
-    // EXTERNAL CONTRACT EXAMPLE:
-    //
-    // If you want to bring in the mainnet DAI contract it would look like:
-    // const mainnetDAIContract = useExternalContractLoader(mainnetProvider, DAI_ADDRESS, DAI_ABI);
-  
-    // If you want to call a function on a new block
-    // useOnBlock(mainnetProvider, () => {
-    //   console.log(`⛓ A new mainnet block is here: ${mainnetProvider._lastBlockNumber}`);
-    // });
-  
-    // Then read your DAI balance like:
-    // const myMainnetDAIBalance = useContractReader({ DAI: mainnetDAIContract }, "DAI", "balanceOf", [
-    //   "0x34aA3F359A9D614239015126635CE7732c18fDF3",
-    // ]);
-  
+    
     // keep track of a variable from the contract in the local React state:
     const balance = useContractReader(readContracts, "YourCollectible", "balanceOf", [address]);
     console.log("🤗 balance:", balance);
-    // 📟 Listen for broadcast events
-    // const transferEvents = useEventListener(readContracts, "YourCollectible", "Transfer", localProvider, 1);
-    // console.log("📟 Transfer events:", transferEvents);
-  
-    //
+
     // 🧠 This effect will update yourCollectibles by polling when your balance changes
     //
     // const yourBalance = balance && balance.toNumber && balance.toNumber();
-    const [yourCollectibles, setYourCollectibles] = useState();
+    const [isLoading, setIsLoading] = useState(false);
+    const collectibles = useSelector(state => state.collectiblesReducer);
+
+    const dispatch = useDispatch();
 
     const updateYourCollectibles = useCallback(async () => {
       const collectibleUpdate = [];
-      for (let tokenIndex = 0; tokenIndex < balance; tokenIndex++) {
+      for (let tokenIndex = 0; tokenIndex < balance && collectibles.length !== balance; tokenIndex++) {
+        setIsLoading(true);
         try {
-          console.log("GEtting token index", tokenIndex);
+          console.log("Getting token index", tokenIndex);
           const tokenId = await readContracts.YourCollectible.tokenOfOwnerByIndex(address, tokenIndex);
           console.log("tokenId", tokenId);
           const tokenURI = await readContracts.YourCollectible.tokenURI(tokenId);
@@ -114,8 +105,14 @@ const NFTItems = () => {
         } catch (e) {
           console.log(e);
         }
+        setIsLoading(false);
       }
-      setYourCollectibles(collectibleUpdate);
+      
+      dispatch({
+        type: LOAD_COLLECTIBLES,
+        payload: collectibleUpdate
+      });
+      
     }, [address, balance]);
   
     useEffect(() => {
@@ -127,82 +124,80 @@ const NFTItems = () => {
     const [transferToAddresses, setTransferToAddresses] = useState({});
     const [approveAddresses, setApproveAddresses] = useState({});
 
-    return (
-        <List
-                bordered
-                dataSource={yourCollectibles}
-                renderItem={item => {
-                  const id = item.id.toNumber();
-                  return (
-                    <List.Item key={id + "_" + item.uri + "_" + item.owner}>
-                      <Card
-                        title={
-                          <div>
-                            <span style={{ fontSize: 16, marginRight: 8 }}>#{id}</span> {item.name}
-                          </div>
-                        }
-                      >
-                        <div>
-                          <img alt="Your NFT" src={item.image} style={{ maxWidth: 150 }} />
-                        </div>
-                        <div>{item.description}</div>
-                      </Card>
+    const classes = useStyles();
+    return isLoading ? 'Loading collectibles...' : (
+      <Grid container spacing={4}>
+        {collectibles.map(collectible => {
+          const id = collectible.id.toNumber();
+        return (
+          <Grid key={`${id}-${collectible.uri}-${collectible.owner}`} item md={4}>
+             <p><span style={{ fontSize: 16, marginRight: 8, fontWeight: 'bold' }}>#{id}</span> {collectible.name}</p>
+            <Paper elevation={1}>
+              <Grid container>
+                <div style={{ width: '100%' }}>
+                  <img alt={`NFT ${collectible.name}`} src={collectible.image} className={classes.nftImage} />
+                </div>
+                <div><p>{collectible.description}</p></div>
+                {writeContracts && 
+                <div>
+                    <Address
+                      address={collectible.owner}
+                      ensProvider={mainnetProvider}
+                      blockExplorer={blockExplorer}
+                      fontSize={16}
+                    />
+                    <AddressInput
+                      ensProvider={mainnetProvider}
+                      placeholder="transfer to address"
+                      value={transferToAddresses[id]}
+                      onChange={newValue => {
+                        const update = {};
+                        update[id] = newValue;
+                        setTransferToAddresses({ ...transferToAddresses, ...update });
+                      }}
+                    />
+                    <Button
+                      onClick={() => {
+                        console.log("writeContracts", writeContracts);
+                        tx(writeContracts.YourCollectible.transferFrom(address, transferToAddresses[id], id));
+                      }}
+                    >
+                      Transfer
+                    </Button>
+                    <AddressInput
+                      ensProvider={mainnetProvider}
+                      placeholder="approve address"
+                      value={approveAddresses[id]}
+                      onChange={newValue => {
+                        const update = {};
+                        update[id] = newValue;
+                        setApproveAddresses({ ...approveAddresses, ...update });
+                      }}
+                    />
+                    <Button
+                      onClick={() => {
+                        console.log("writeContracts", writeContracts);
+                        tx(writeContracts.YourCollectible.approve(approveAddresses[id], id));
+                      }}
+                    >
+                      Approve
+                    </Button>
+                    <Sell
+                      provider={userProvider}
+                      accountAddress={address}
+                      ERC721Address={writeContracts.YourCollectible.address}
+                      tokenId={id}
+                    />
+                </div>
+                }
+              </Grid>
 
-                      <div>
-                        owner:{" "}
-                        <Address
-                          address={item.owner}
-                          ensProvider={mainnetProvider}
-                          blockExplorer={blockExplorer}
-                          fontSize={16}
-                        />
-                        <AddressInput
-                          ensProvider={mainnetProvider}
-                          placeholder="transfer to address"
-                          value={transferToAddresses[id]}
-                          onChange={newValue => {
-                            const update = {};
-                            update[id] = newValue;
-                            setTransferToAddresses({ ...transferToAddresses, ...update });
-                          }}
-                        />
-                        <Button
-                          onClick={() => {
-                            console.log("writeContracts", writeContracts);
-                            tx(writeContracts.YourCollectible.transferFrom(address, transferToAddresses[id], id));
-                          }}
-                        >
-                          Transfer
-                        </Button>
-                        <AddressInput
-                          ensProvider={mainnetProvider}
-                          placeholder="approve address"
-                          value={approveAddresses[id]}
-                          onChange={newValue => {
-                            const update = {};
-                            update[id] = newValue;
-                            setApproveAddresses({ ...approveAddresses, ...update });
-                          }}
-                        />
-                        <Button
-                          onClick={() => {
-                            console.log("writeContracts", writeContracts);
-                            tx(writeContracts.YourCollectible.approve(approveAddresses[id], id));
-                          }}
-                        >
-                          Approve
-                        </Button>
-                        <Sell
-                          provider={userProvider}
-                          accountAddress={address}
-                          ERC721Address={writeContracts.YourCollectible.address}
-                          tokenId={id}
-                        ></Sell>
-                      </div>
-                    </List.Item>
-                  );
-                }}
-              />
+            </Paper>
+          </Grid>
+      )
+    })}
+
+      </Grid>
     );
 
 };

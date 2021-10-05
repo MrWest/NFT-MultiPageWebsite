@@ -12,6 +12,7 @@ import Wallet from "./Wallet";
 import Web3Modal from "web3modal";
 import { INFURA_ID } from "../constants";
 import { LOGIN, LOGOUT } from "../actions/types";
+import { Grid } from "@material-ui/core";
 
 /*
   ~ What it does? ~
@@ -80,23 +81,29 @@ const NetworkInfo = ({ userProvider,localProvider, targetNetwork, mainnetProvide
   console.log('crap: ', userProvider, address);
   //TODO ensure not to use useUserAddress(userProvider) without the provider being a connected valid provvider
   /* 💵 This hook will get the price of ETH from 🦄 Uniswap: */
-  const price = useExchangePrice(targetNetwork, mainnetProvider);
+  const price = useExchangePrice(targetNetwork, userProvider);
 return (
-  <span>
-    {address ? (
-      <Address address={address} ensProvider={mainnetProvider} blockExplorer={blockExplorer} />
-    ) : (
-      "Connecting..."
-    )}
-    <Balance address={address} provider={localProvider} price={price} />
-    <Wallet
-      address={address}
-      provider={userProvider}
-      ensProvider={mainnetProvider}
-      price={price}
-      color="#afa"
-    />
-  </span>
+  <Grid container alignItems="center">
+    <Grid  item>
+      {address ? (
+        <Address address={address} ensProvider={mainnetProvider} blockExplorer={blockExplorer} />
+      ) : (
+        "Connecting..."
+      )}
+    </Grid>
+    <Grid  item xs>
+      <Balance address={address} provider={localProvider} price={price} />
+    </Grid>
+    <Grid  item>
+      <Wallet
+        address={address}
+        provider={userProvider}
+        ensProvider={mainnetProvider}
+        price={price}
+        color="#afa"
+      />
+     </Grid>
+  </Grid>
 );
     };
 
@@ -161,15 +168,25 @@ export default function Account() {
 
   
   return (
-    <div>
-    {logged ? <>
-    <NetworkInfo localProvider={localProvider} 
-    userProvider={userProvider} targetNetwork={targetNetwork}
-    mainnetProvider={mainnetProvider} blockExplorer={blockExplorer} />
-    <ConnectionButton text="Logout" onClick={logoutOfWeb3Modal} />
-    </> :
-    <ConnectionButton  text="Connect" onClick={loadWeb3Modal} />
+    <Grid container>
+      
+    {logged ? 
+      <Grid item xs>
+        <Grid container alignItems="center">
+          <Grid item>
+            <NetworkInfo localProvider={localProvider} 
+            userProvider={userProvider} targetNetwork={targetNetwork}
+            mainnetProvider={mainnetProvider} blockExplorer={blockExplorer} />
+          </Grid>
+          <Grid item>
+            <ConnectionButton text="Logout" onClick={logoutOfWeb3Modal} />
+          </Grid>
+        </Grid>
+      </Grid> :
+      <Grid item>
+        <ConnectionButton  text="Connect" onClick={loadWeb3Modal} />
+      </Grid>
     }
-    </div>
+    </Grid>
   );
 }

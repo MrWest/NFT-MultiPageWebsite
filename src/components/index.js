@@ -3,3 +3,8 @@ export { default as Footer } from "./Footer";
 export { default as Home } from "./Home";
 export { default as About } from "./About";
 export { default as Contact } from "./Contact";
+export { default as Mint } from "./Mint";
+export { default as LazyMint } from "./LazyMint"
+export { default as RaribleItemIndexer } from "./RaribleItemIndexer";
+export { default as AddressInput } from "./AddressInput";
+export { default as Sell } from "./Sell";
