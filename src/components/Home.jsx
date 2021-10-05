@@ -11,7 +11,7 @@ function Home() {
   const classes = useStyles();
   return (
     <div className="home">
-      <div className="container" style={{ padding: '60px 0px'}}>
+      <div className="container" style={{ paddingTop: 60, paddingBottom: 180 }}>
       <Grid container spacing={6}>
         <Grid item md={6} >
             <img
