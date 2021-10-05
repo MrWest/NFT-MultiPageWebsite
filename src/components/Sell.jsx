@@ -7,7 +7,7 @@ export default function Sell(props) {
   const [sellState, setSellState] = React.useState();
   const [sellForEthValue, setSellForEthValue] = React.useState();
   const buttons = (
-    <Tooltip placement="right" title="* 10 ** 18">
+    <Tooltip placement="right" title="* 10 ** 18" >
       <span
         role="img"
         aria-label="* 10 ** 18"
@@ -26,7 +26,7 @@ export default function Sell(props) {
   );
   return (
     <div>
-      <Button onClick={() => setSellState("ETH")}>Sell for ETH</Button>
+      <Button style={props.style} onClick={() => setSellState("ETH")}>Sell for ETH</Button>
 
       {(sellState && sellState === "ETH" && (
         <div>

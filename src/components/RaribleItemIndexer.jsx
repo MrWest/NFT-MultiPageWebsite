@@ -1,6 +1,13 @@
 import React from "react";
 import { Button, Input, List, Card } from "antd";
 import {AddressInput, Sell} from './index'
+import { Grid, makeStyles } from "@material-ui/core";
+import { useContractLoader, useGasPrice } from "../hooks";
+import { useSelector } from "react-redux";
+import styles from './styles/RaribleItemIndexer';
+import { Transactor } from "../helpers";
+
+const useStyles = makeStyles(styles);
 
 export default function RaribleItemIndexer(props) {
   const [collectionContract, setCollectionContract] = React.useState();
@@ -8,12 +15,22 @@ export default function RaribleItemIndexer(props) {
   const [tokenId, setTokenId] = React.useState();
   const [downloading, setDownloading] = React.useState();
   const [items, setItems] = React.useState();
-  console.log({writeContracts: props.writeContracts})
-  const writeContracts = props.writeContracts
-  const tx = props.tx
+
+  const { mainnetProvider, targetNetwork } = useSelector(state => state.networkReducer);
+    
+   /* 🔥 This hook will get the price of Gas from ⛽️ EtherGasStation */
+   const gasPrice = useGasPrice(targetNetwork, "fast");
+  // If you want to make 🔐 write transactions to your contracts, use the userProvider:
+  const writeContracts = useContractLoader(mainnetProvider);
+  // The transactor wraps transactions and provides notificiations
+  const tx = Transactor(mainnetProvider, gasPrice);
+
+  const classes = useStyles();
   return (
-    <div>
-            <div style={{ paddingTop: 32, width: 740, margin: "auto" }}>
+    <div className="container" style={{ paddingTop: 60, paddingBottom: 120 }}>
+      <Grid container spacing={6} >
+        <Grid item md={6}>
+      <div style={{ paddingTop: 32, width: '100%', margin: "auto" }}>
       <AddressInput
         ensProvider={props.ensProvider}
         placeholder="contractAddress"
@@ -49,32 +66,25 @@ export default function RaribleItemIndexer(props) {
         Get Item
       </Button>
     </div>
-            <pre style={{ padding: 16, width: 500, margin: "auto", paddingBottom: 150 }}>
-              {JSON.stringify(items)}
-            </pre>
-            <div style={{ width: 640, margin: "auto", marginTop: 32, paddingBottom: 32 }}>
-              <List
-                bordered
-                dataSource={items}
-                renderItem={item => {
-                  const id = item.id;
-                  return (
+    <div style={{ width: '100%', margin: "auto", marginTop: 32, paddingBottom: 32 }}>
+      <List
+        bordered
+        dataSource={items}
+        renderItem={item => {
+          const id = item.id;
+              return (
                     <List.Item key={id}>
-                      <Card
-                        title={
-                          <div>
-                            <span style={{ fontSize: 16, marginRight: 8 }}>{item.name}</span>
-                          </div>
-                        }
-                      >
-                        <div>
-                          <img src={item.image} style={{ maxWidth: 150 }} />
+                      <Grid container>
+                        <div style={{ width: '100%' }}>
+                          <h4 className={classes.imgTitle}>{item.name}</h4>
                         </div>
-                        <div>
-                          <p>description: {item.description}</p>
+                        <Grid item md={12}>
+                          <img alt={`NFT-${item.name}`} src={item.image} className={classes.nftImage} />
+                        </Grid>
+                        <div style={{ width: '100%' }}>
+                          <p className={classes.imgTitle} style={{ marginTop: 8 }}>{item.description}</p>
                         </div>
-                      </Card>
-                      <div>
+                      <Grid item md={12}>
                         <AddressInput
                           ensProvider={props.ensProvider}
                           placeholder="approve address"
@@ -83,28 +93,55 @@ export default function RaribleItemIndexer(props) {
                             setApproveAddress(newValue);
                           }}
                         />
-                        <Button
-                          onClick={() => {
-                            console.log("writeContracts", writeContracts);
-                            const thisERC721Rarible = writeContracts.ERC721Rarible.attach(collectionContract)
-                            tx(thisERC721Rarible.approve(approveAddress, tokenId));
-                          }}
-                        >
-                          Approve
-                        </Button>
-
-                        <Sell
-                          provider={props.provider}
-                          accountAddress={props.accountAddress}
-                          ERC721Address={collectionContract}
-                          tokenId={tokenId}
-                        ></Sell>
+                        <Grid container spacing={6}>
+                          <Grid item xs>
+                             <Button
+                               style={{ width:'100%' }}
+                                onClick={() => {
+                                  console.log("writeContracts", writeContracts);
+                                  const thisERC721Rarible = writeContracts.ERC721Rarible.attach(collectionContract)
+                                  tx(thisERC721Rarible.approve(approveAddress, tokenId));
+                                }}
+                              >
+                                Approve
+                              </Button> 
+                          </Grid>
+                         <Grid item xs>
+                              <Sell
+                                provider={props.provider}
+                                accountAddress={props.accountAddress}
+                                ERC721Address={collectionContract}
+                                tokenId={tokenId}
+                                style={{ width:  '100%' }}
+                                />
+                         </Grid>
+                      </Grid>
+                      <div style={{ paddingTop: 16, width: '100%', paddingBottom: 16 }}>
+                        {items?.map(i => {
+                          const properties = Object.keys(i);
+                          return (<div>
+                            {properties.map(key => (<p key={key} className={classes.itemProperties}><strong>{key}: </strong>{i[key]}</p>))}
+                          </div>)
+                        })}
                       </div>
+                    </Grid>
+                  </Grid>
                     </List.Item>
                   );
                 }}
               />
             </div>
+        </Grid>
+        <Grid item md={6}>
+            <h1 class="font-weight-light">Search Item</h1>
+              <p>
+                Lorem Ipsum is simply dummy text of the printing and typesetting
+                industry. Lorem Ipsum has been the industry's standard dummy text
+                ever since the 1500s, when an unknown printer took a galley of
+                type and scrambled it to make a type specimen book.
+              </p>
+          </Grid>
+        </Grid>
     </div>
   );
 }

@@ -41,12 +41,7 @@ const NetworkReducer = (state = { logged: false, localProvider, injectedProvider
       };
 
     default:
-      return state.packs
-        ? state
-        : {
-            ...state,
-            packs: []
-          };
+      return state;
   }
 };
 

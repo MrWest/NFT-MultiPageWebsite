@@ -2,6 +2,7 @@ import React from "react";
 import { Provider } from 'react-redux';
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import { Navigation, Footer, Home, About, Contact, Mint, RaribleItemIndexer } from "./components";
+import IPFSUpload from "./components/IPFSUpload";
 import { initializeStore } from './store';
 
 const store = initializeStore({});
@@ -16,7 +17,7 @@ function App() {
           <Route path="/" exact component={() => <Home />} />
           <Route path="/mint" exact component={() => <Mint />} />
           <Route path="/search-item" exact component={() => <RaribleItemIndexer />} />
-          <Route path="/ipfs-upload" exact component={() => <About />} />
+          <Route path="/ipfs-upload" exact component={() => <IPFSUpload />} />
           <Route path="/about" exact component={() => <About />} />
           <Route path="/contact" exact component={() => <Contact />} />
         </Switch>
