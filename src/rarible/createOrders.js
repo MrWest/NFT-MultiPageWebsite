@@ -34,7 +34,7 @@ function createERC721ForEthOrder(maker, contract, tokenId, price, salt) {
       assetType: {
         assetClass: "ETH",
       },
-      value: price,
+      value: parseFloat(price),
     },
     data: {
       dataType: "RARIBLE_V2_DATA_V1",
@@ -61,7 +61,7 @@ function createEthForERC721Order(maker, contract, tokenId, price, salt) {
       assetType: {
         assetClass: "ETH",
       },
-      value: price,
+      value: parseFloat(price),
     },
     data: {
       dataType: "RARIBLE_V2_DATA_V1",
