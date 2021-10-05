@@ -1,3 +1,4 @@
+import { Grid } from "@material-ui/core";
 import { Skeleton, Typography } from "antd";
 import React from "react";
 import Blockies from "react-blockies";
@@ -105,11 +106,11 @@ export default function Address(props) {
   // }
 
   return (
-    <span>
-      <span style={{ verticalAlign: "middle" }}>
+    <Grid container alignItems="center" justifyContent="center" spacing={4}>
+      <Grid item style={{ paddingTop: 20, paddingRight: 0 }}>
         <Blockies seed={address.toLowerCase()} size={4} scale={4} />
-      </span>
-      <span style={{ verticalAlign: "middle", paddingLeft: 5, fontSize: 16 }}>
+      </Grid>
+      <Grid item>
         <Text copyable={{ text: address }} className="copyicon">
           <a
             style={{ color: "#aaa", fontSize: 16 }} //currentTheme === "light" ? "#222222" : "#ddd" }}
@@ -120,7 +121,7 @@ export default function Address(props) {
             {displayAddress}
           </a>
         </Text>
-      </span>
-    </span>
+      </Grid>
+    </Grid>
   );
 }

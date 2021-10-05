@@ -1,6 +1,7 @@
 import React from "react";
 import { Button, Input, Tooltip } from "antd";
 import { createSellOrder} from "../rarible/createOrders";
+import { Grid } from "@material-ui/core";
 const { utils } = require("ethers");
 
 export default function Sell(props) {
@@ -25,11 +26,11 @@ export default function Sell(props) {
     </Tooltip>
   );
   return (
-    <div>
-      <Button style={props.style} onClick={() => setSellState("ETH")}>Sell for ETH</Button>
-
-      {(sellState && sellState === "ETH" && (
-        <div>
+    <Grid container justifyContent="center">
+      <Button style={{...props.style, marginBottom: 4, minWidth: '60%' }} onClick={() => setSellState("ETH")}>Sell for ETH</Button>
+    
+      {sellState && sellState === "ETH" ? (
+        <>
           <Input
             value={sellForEthValue}
             placeholder="ETH"
@@ -39,6 +40,7 @@ export default function Sell(props) {
             suffix={buttons}
           />
           <Button
+            style={{...props.style, marginTop: 4, minWidth: '60%' }}
             onClick={() =>
               createSellOrder("MAKE_ERC721_TAKE_ETH", props.provider, {
                 accountAddress: props.accountAddress,
@@ -50,9 +52,12 @@ export default function Sell(props) {
           >
             Create Sell Order
           </Button>
-        </div>
-      )) ||
-        (sellState === "YERC" && <span>YERC</span>)}
-    </div>
+        </>
+      ):   (
+      <p style={{ textAlign: 'center', marginTop: 4, fontSize: 10 }}>
+      Lorem Ipsum is simply dummy text of the printing and typesetting
+      industry. 
+     </p>)}
+    </Grid>
   );
 }

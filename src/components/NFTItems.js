@@ -1,6 +1,6 @@
 
 import React, { useCallback, useEffect, useState } from "react";
-import { Button } from "antd";
+import { Button, Tabs } from "antd";
 import "antd/dist/antd.css";
 import { useUserAddress } from "eth-hooks";
 import { useDispatch, useSelector } from 'react-redux';
@@ -15,8 +15,9 @@ useGasPrice,
 useUserProvider,
 } from "../hooks";
 import { LOAD_COLLECTIBLES } from "../actions/types";
-import { Grid, makeStyles, Paper } from "@material-ui/core";
+import { Box, Grid, makeStyles, Paper, Tab, TabPanel } from "@material-ui/core";
 import styles from './styles/NFTItems';
+import { NFTItem } from "./NFTItemsExtended";
 
 const useStyles = makeStyles(styles);
 
@@ -74,7 +75,7 @@ const NFTItems = () => {
     // 🧠 This effect will update yourCollectibles by polling when your balance changes
     //
     // const yourBalance = balance && balance.toNumber && balance.toNumber();
-    const [isLoading, setIsLoading] = useState(false);
+    const [isLoading, setIsLoading] = useState('');
     const collectibles = useSelector(state => state.collectiblesReducer);
 
     const dispatch = useDispatch();
@@ -82,7 +83,7 @@ const NFTItems = () => {
     const updateYourCollectibles = useCallback(async () => {
       const collectibleUpdate = [];
       for (let tokenIndex = 0; tokenIndex < balance && collectibles.length !== balance; tokenIndex++) {
-        setIsLoading(true);
+        setIsLoading(`Loading your collectibles... ${balance ? 100*tokenIndex/balance : 0}%`);
         try {
           console.log("Getting token index", tokenIndex);
           const tokenId = await readContracts.YourCollectible.tokenOfOwnerByIndex(address, tokenIndex);
@@ -105,13 +106,14 @@ const NFTItems = () => {
         } catch (e) {
           console.log(e);
         }
-        setIsLoading(false);
+       
       }
       
       dispatch({
         type: LOAD_COLLECTIBLES,
         payload: collectibleUpdate
       });
+      setIsLoading('');
       
     }, [address, balance]);
   
@@ -125,77 +127,27 @@ const NFTItems = () => {
     const [approveAddresses, setApproveAddresses] = useState({});
 
     const classes = useStyles();
-    return isLoading ? 'Loading collectibles...' : (
+    return (
       <Grid container spacing={4}>
-        {collectibles.map(collectible => {
-          const id = collectible.id.toNumber();
-        return (
-          <Grid key={`${id}-${collectible.uri}-${collectible.owner}`} item md={4}>
-             <p><span style={{ fontSize: 16, marginRight: 8, fontWeight: 'bold' }}>#{id}</span> {collectible.name}</p>
-            <Paper elevation={1}>
-              <Grid container>
-                <div style={{ width: '100%' }}>
-                  <img alt={`NFT ${collectible.name}`} src={collectible.image} className={classes.nftImage} />
-                </div>
-                <div><p>{collectible.description}</p></div>
-                {writeContracts && 
-                <div>
-                    <Address
-                      address={collectible.owner}
-                      ensProvider={mainnetProvider}
-                      blockExplorer={blockExplorer}
-                      fontSize={16}
-                    />
-                    <AddressInput
-                      ensProvider={mainnetProvider}
-                      placeholder="transfer to address"
-                      value={transferToAddresses[id]}
-                      onChange={newValue => {
-                        const update = {};
-                        update[id] = newValue;
-                        setTransferToAddresses({ ...transferToAddresses, ...update });
-                      }}
-                    />
-                    <Button
-                      onClick={() => {
-                        console.log("writeContracts", writeContracts);
-                        tx(writeContracts.YourCollectible.transferFrom(address, transferToAddresses[id], id));
-                      }}
-                    >
-                      Transfer
-                    </Button>
-                    <AddressInput
-                      ensProvider={mainnetProvider}
-                      placeholder="approve address"
-                      value={approveAddresses[id]}
-                      onChange={newValue => {
-                        const update = {};
-                        update[id] = newValue;
-                        setApproveAddresses({ ...approveAddresses, ...update });
-                      }}
-                    />
-                    <Button
-                      onClick={() => {
-                        console.log("writeContracts", writeContracts);
-                        tx(writeContracts.YourCollectible.approve(approveAddresses[id], id));
-                      }}
-                    >
-                      Approve
-                    </Button>
-                    <Sell
-                      provider={userProvider}
-                      accountAddress={address}
-                      ERC721Address={writeContracts.YourCollectible.address}
-                      tokenId={id}
-                    />
-                </div>
-                }
-              </Grid>
-
-            </Paper>
-          </Grid>
-      )
-    })}
+        <Grid item md={12} style={{ height: 24, paddingTop: 0, paddingBottom: 0 }}>
+          <p>{isLoading}</p>
+        </Grid>
+        {collectibles.map(collectible => (
+          <NFTItem 
+          classes={classes}
+          collectible={collectible} 
+          writeContracts={writeContracts}
+          userProvider={userProvider} 
+          address={address}
+          transferToAddresses={transferToAddresses}
+          approveAddresses={approveAddresses} 
+          setTransferToAddresses={setTransferToAddresses} 
+          setApproveAddresses={setApproveAddresses} 
+          tx={tx}
+          mainnetProvider={mainnetProvider}
+          blockExplorer={blockExplorer}
+          />
+        ))}
 
       </Grid>
     );

@@ -41,7 +41,7 @@ export default function AddressInput(props) {
 
   const scannerButton = (
     <div
-      style={{ marginTop: 4, cursor: "pointer" }}
+      style={{ cursor: "pointer" }}
       onClick={() => {
         setScan(!scan);
       }}
