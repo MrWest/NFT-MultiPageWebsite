@@ -20,7 +20,7 @@ async function prepareOrderMessage(form) {
 
 function createERC721ForEthOrder(maker, contract, tokenId, price, salt) {
   return {
-    type: "RARIBLE_V1",
+    type: "RARIBLE_V2",
     maker: maker,
     make: {
       assetType: {
@@ -86,7 +86,7 @@ export const createSellOrder = async (type, provider, params) => {
         salt
       );
       console.log('kkk2', { order });
-      const preparedOrder = await prepareOrderMessage({...order, signature: '0x45461654b86e856686e7a2e9a9213b29f8dc32a731046e0c2f1aa01e4eaa991e41ebc67535fac14c333ad5b0d0d821ef518edc9ed08ad7efc0af572620c045ce1c'});
+      const preparedOrder = await prepareOrderMessage(order);
       console.log({preparedOrder})
       signature = await sign(provider, preparedOrder, params.accountAddress);
 
