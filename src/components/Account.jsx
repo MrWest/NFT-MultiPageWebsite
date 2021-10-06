@@ -1,6 +1,6 @@
 
 import React from "react";
-import { Button } from "antd";
+import { Alert, Button } from "antd";
 import { useUserAddress  } from "eth-hooks";
 import { Web3Provider } from "@ethersproject/providers";
 import { useExchangePrice, useUserProvider  } from "../hooks";
@@ -10,7 +10,7 @@ import Address from "./Address";
 import Balance from "./Balance";
 import Wallet from "./Wallet";
 import Web3Modal from "web3modal";
-import { INFURA_ID } from "../constants";
+import { INFURA_ID, NETWORK } from "../constants";
 import { LOGIN, LOGOUT } from "../actions/types";
 import { Grid } from "@material-ui/core";
 
@@ -108,6 +108,59 @@ return (
     };
 
 
+const NetworkAlerts = ({ localProvider, userProvider, targetNetwork }) => {
+  // You can warn the user if you would like them to be on a specific network
+  const localChainId = localProvider?._network?.chainId;
+  let selectedChainId = userProvider?.network?.chainId;
+ console.log('xxx: ', localChainId, selectedChainId);
+    let networkDisplay = "";
+  if (localChainId && selectedChainId && localChainId !== selectedChainId) {
+    const networkSelected = NETWORK(selectedChainId);
+    const networkLocal = NETWORK(localChainId);
+    if (selectedChainId === 1337 && localChainId === 31337) {
+      networkDisplay = (
+        <div style={{ zIndex: 2, position: "absolute", right: 0, top: 60, padding: 16 }}>
+          <Alert
+            message="⚠️ Wrong Network ID"
+            description={
+              <div>
+                You have <b>chain id 1337</b> for localhost and you need to change it to <b>31337</b> to work with
+                HardHat.
+                <div>(MetaMask -&gt; Settings -&gt; Networks -&gt; Chain ID -&gt; 31337)</div>
+              </div>
+            }
+            type="error"
+            closable={false}
+          />
+        </div>
+      );
+    } else {
+      networkDisplay = (
+        <div style={{ zIndex: 2, position: "absolute", right: 0, top: 60, padding: 16 }}>
+          <Alert
+            message="⚠️ Wrong Network"
+            description={
+              <div>
+                You have <b>{networkSelected && networkSelected.name}</b> selected and you need to be on{" "}
+                <b>{networkLocal && networkLocal.name}</b>.
+              </div>
+            }
+            type="error"
+            closable={false}
+          />
+        </div>
+      );
+    }
+  } else {
+    networkDisplay = (
+      <div style={{ zIndex: -1, position: "absolute", right: 154, top: 28, padding: 16, color: targetNetwork.color }}>
+        {targetNetwork.name}
+      </div>
+    );
+  }
+  return networkDisplay;
+};
+
 
 // "eth-hooks": "^2.3.9",
 export default function Account() {
@@ -118,9 +171,11 @@ export default function Account() {
   const dispatch = useDispatch();
   const loadWeb3Modal = async () => {
     const provider = await web3Modal.connect();
+    const webProvider = new Web3Provider(provider);
+    await webProvider.getNetwork();
     dispatch({
       type: LOGIN,
-      payload: new Web3Provider(provider)
+      payload: webProvider
     });
   };
   const logoutOfWeb3Modal = async () => {
@@ -129,44 +184,8 @@ export default function Account() {
       type: LOGOUT,
       payload: localProvider
     });
-    // setTimeout(() => {
-    //   window.location.reload();
-    // }, 1);
   };
-
-  const modalButtons = [];
-  if (web3Modal) {
-    if (logged) {
-      modalButtons.push(
-        <Button
-          key="logoutbutton"
-          style={{ verticalAlign: "top", marginLeft: 8, marginTop: 4 }}
-          shape="round"
-          size="large"
-          onClick={logoutOfWeb3Modal}
-        >
-          logout
-        </Button>,
-      );
-    } else {
-      modalButtons.push(
-        <Button
-          key="loginbutton"
-          style={{ verticalAlign: "top", marginLeft: 8, marginTop: 4 }}
-          shape="round"
-          size="large"
-          /* type={minimized ? "default" : "primary"}     too many people just defaulting to MM and having a bad time */
-          onClick={loadWeb3Modal}
-        >
-          connect
-        </Button>,
-      );
-    }
-  }
-
-  // const { currentTheme } = useThemeSwitcher();
-
-  
+ 
   return (
     <Grid container>
       
@@ -187,6 +206,7 @@ export default function Account() {
         <ConnectionButton  text="Connect" onClick={loadWeb3Modal} />
       </Grid>
     }
+      <NetworkAlerts localProvider={localProvider} userProvider={userProvider} targetNetwork={targetNetwork} />
     </Grid>
   );
-}
+};

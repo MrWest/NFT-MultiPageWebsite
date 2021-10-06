@@ -70,7 +70,8 @@ const NFTItems = () => {
     
     // keep track of a variable from the contract in the local React state:
     const balance = useContractReader(readContracts, "YourCollectible", "balanceOf", [address]);
-    console.log("🤗 balance:", balance);
+    const balanceNumber = balance?.toNumber();
+    console.log("🤗 balance:", balance, balanceNumber);
 
     // 🧠 This effect will update yourCollectibles by polling when your balance changes
     //
@@ -82,8 +83,8 @@ const NFTItems = () => {
 
     const updateYourCollectibles = useCallback(async () => {
       const collectibleUpdate = [];
-      for (let tokenIndex = 0; tokenIndex < balance && collectibles.length !== balance; tokenIndex++) {
-        setIsLoading(`Loading your collectibles... ${balance ? 100*tokenIndex/balance : 0}%`);
+      for (let tokenIndex = 0; tokenIndex < balanceNumber; tokenIndex++) {
+        setIsLoading(`Loading your collectibles... ${balanceNumber ? 100*tokenIndex/balanceNumber : 0}%`);
         try {
           console.log("Getting token index", tokenIndex);
           const tokenId = await readContracts.YourCollectible.tokenOfOwnerByIndex(address, tokenIndex);
@@ -99,7 +100,9 @@ const NFTItems = () => {
           try {
             const jsonManifest = JSON.parse(jsonManifestBuffer.toString());
             console.log("jsonManifest", jsonManifest);
+            
             collectibleUpdate.push({ id: tokenId, uri: tokenURI, owner: address, ...jsonManifest });
+            
           } catch (e) {
             console.log(e);
           }
@@ -108,14 +111,14 @@ const NFTItems = () => {
         }
        
       }
-      
       dispatch({
         type: LOAD_COLLECTIBLES,
         payload: collectibleUpdate
       });
+      
       setIsLoading('');
       
-    }, [address, balance]);
+    }, [address, balanceNumber]);
   
     useEffect(() => {
       updateYourCollectibles();
@@ -133,7 +136,8 @@ const NFTItems = () => {
           <p>{isLoading}</p>
         </Grid>
         {collectibles.map(collectible => (
-          <NFTItem 
+          <NFTItem
+          key={collectible.id.toNumber()} 
           classes={classes}
           collectible={collectible} 
           writeContracts={writeContracts}

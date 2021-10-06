@@ -1,5 +1,5 @@
 
-const domain = 'https://api-staging.rarible.com/protocol/v0.1/ethereum/';
+const domain = 'https://api-dev.rarible.com/protocol/v0.1/ethereum/';
 
 const encodeOrderEP = `${domain}order/encoder/order`;
 const createSellOrderEP = `${domain}order/orders`;

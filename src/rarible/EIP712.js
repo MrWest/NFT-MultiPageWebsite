@@ -31,7 +31,9 @@ const EIP712 = {
 
   signTypedData: async function (provider, from, data) {
     const msgData = JSON.stringify(data);
+    console.log('kkk@', provider, from, data);
     const sig = await provider.send("eth_signTypedData_v4", [from, msgData]);
+    console.log('kkk#', sig);
     const sig0 = sig.substring(2);
     const r = "0x" + sig0.substring(0, 64);
     const s = "0x" + sig0.substring(64, 128);

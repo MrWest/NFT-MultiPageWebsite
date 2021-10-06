@@ -50,7 +50,7 @@ const NFTItem = ({ classes, collectible, writeContracts, userProvider, address,
                 <div>
                   <p className={classes.nftName}><strong>#{id}</strong> {collectible.name}</p>
                 </div>
-                <div>
+                <div style={{ minHeight: 285 }}>
                   <img alt={`NFT ${collectible.name}`} src={collectible.image} className={classes.nftImage} />
                 </div>
                 <div><p className={classes.nftName}>{collectible.description}</p></div>

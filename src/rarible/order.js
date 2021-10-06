@@ -8,8 +8,8 @@ const EIP712 = require("./EIP712").default;
 
 export async function sign(provider, order, account) {
 	
-	console.log('kkk-sing', provider, order);
-	const data = EIP712.createTypeData(order.domain, order.structType, order.struct, order.types);
+	console.log('kkk-sing', provider, order, { ...order.domain, chainId: provider._network.chainId });
+	const data = EIP712.createTypeData({ ...order.domain, chainId: provider._network.chainId }, order.structType, order.struct, order.types);
   console.log({data})
 	return (await EIP712.signTypedData(provider, account, data)).sig;
 }

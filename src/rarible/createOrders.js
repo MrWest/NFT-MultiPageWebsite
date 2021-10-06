@@ -4,7 +4,8 @@ import { createSellOrderEP, encodeOrderEP } from "../apis/endpoints";
 import { sign } from "./order";
 
 const random = (min, max) => Math.floor(Math.random() * (max - min)) + min;
-
+const signature = "0xbf0511d39949e32ef4957a1b2d85264c53242ba0b7d3726dccfdf374530dfa6911f30fead7774d897bf2d8d168e63038dde1ccccc8fe059ef32130eb78f970d21b";
+ 
 async function prepareOrderMessage(form) {
   const res = await fetch(encodeOrderEP, {
     method: "POST",
@@ -42,6 +43,7 @@ function createERC721ForEthOrder(maker, contract, tokenId, price, salt) {
       originFees: [],
     },
     salt,
+    signature
   };
 }
 
@@ -95,7 +97,7 @@ export const createSellOrder = async (type, provider, params) => {
     default:
       break;
   }
-
+  console.log('kkk4', signature);
   const raribleOrderResult = await fetch(createSellOrderEP, {
     method: "POST",
     headers: {
