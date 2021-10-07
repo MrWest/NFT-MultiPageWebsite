@@ -46,7 +46,7 @@ const OrderIndexer = ({}) => {
     const [downloading, setDownloading] = React.useState();
     const [sellOrderContent, setSellOrderContent] = React.useState();
 
-    const { mainnetProvider } = useSelector(state => state.networkReducer);
+    const { logged, mainnetProvider } = useSelector(state => state.networkReducer);
     
     return (
         <div className="container" style={{ paddingTop: 60, paddingBottom: 180 }} >
@@ -126,7 +126,7 @@ const OrderIndexer = ({}) => {
                         </div>
                       </Card>
 
-                      <SellButtonSection item={item} />
+                      {logged && <SellButtonSection item={item} />}
                     </List.Item>
                   );
                 }}
