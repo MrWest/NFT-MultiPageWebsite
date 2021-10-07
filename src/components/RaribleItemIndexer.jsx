@@ -7,6 +7,7 @@ import { useSelector } from "react-redux";
 import styles from './styles/RaribleItemIndexer';
 import { Transactor } from "../helpers";
 import { getNFTItemsEP } from "../apis/endpoints";
+import { useUserProvider } from "eth-hooks";
 
 const useStyles = makeStyles(styles);
 
@@ -17,12 +18,13 @@ export default function RaribleItemIndexer(props) {
   const [downloading, setDownloading] = React.useState();
   const [items, setItems] = React.useState();
 
-  const { mainnetProvider, targetNetwork } = useSelector(state => state.networkReducer);
-    
-   /* 🔥 This hook will get the price of Gas from ⛽️ EtherGasStation */
-   const gasPrice = useGasPrice(targetNetwork, "fast");
+  const { injectedProvider,localProvider, mainnetProvider, targetNetwork } = useSelector(state => state.networkReducer);
+  //const userProvider = useUserProvider(injectedProvider,localProvider);
+   
   // If you want to make 🔐 write transactions to your contracts, use the userProvider:
   const writeContracts = useContractLoader(mainnetProvider);
+  /* 🔥 This hook will get the price of Gas from ⛽️ EtherGasStation */
+   const gasPrice = useGasPrice(targetNetwork, "fast");
   // The transactor wraps transactions and provides notificiations
   const tx = Transactor(mainnetProvider, gasPrice);
 
@@ -33,7 +35,7 @@ export default function RaribleItemIndexer(props) {
         <Grid item md={6}>
       <div style={{ paddingTop: 32, width: '100%', margin: "auto" }}>
       <AddressInput
-        ensProvider={props.ensProvider}
+        ensProvider={mainnetProvider}
         placeholder="contractAddress"
         value={collectionContract}
         onChange={newValue => {
@@ -87,7 +89,7 @@ export default function RaribleItemIndexer(props) {
                         </div>
                       <Grid item md={12}>
                         <AddressInput
-                          ensProvider={props.ensProvider}
+                          ensProvider={mainnetProvider}
                           placeholder="approve address"
                           value={approveAddress}
                           onChange={newValue => {
@@ -109,8 +111,8 @@ export default function RaribleItemIndexer(props) {
                           </Grid>
                          <Grid item xs>
                               <Sell
-                                provider={props.provider}
-                                accountAddress={props.accountAddress}
+                                provider={localProvider}
+                                accountAddress={mainnetProvider}
                                 ERC721Address={collectionContract}
                                 tokenId={tokenId}
                                 style={{ width:  '100%' }}

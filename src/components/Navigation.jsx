@@ -7,10 +7,13 @@ function Navigation(props) {
     <div className="navigation">
       <nav className="navbar navbar-expand navbar-dark bg-dark">
         <div className="container">
-          <Link className="navbar-brand" to="/">
-            NFT Multi-Page Website
-          </Link>
-          <div>
+          <Grid container alignItems="center">
+            <Grid item>
+            <Link className="navbar-brand" to="/">
+              NFT Multi-Page Website
+            </Link>
+            </Grid>
+            <Grid item>
             <ul className="navbar-nav ml-auto">
               <li
                 className={`nav-item  ${
@@ -42,6 +45,15 @@ function Navigation(props) {
               </li>
               <li
                 className={`nav-item  ${
+                  props.location.pathname === "/search-order" ? "active" : ""
+                }`}
+              >
+                <Link className="nav-link" to="/search-order">
+                  Search Order
+                </Link>
+              </li>
+              <li
+                className={`nav-item  ${
                   props.location.pathname === "/ipfs-upload" ? "active" : ""
                 }`}
               >
@@ -68,15 +80,16 @@ function Navigation(props) {
                 </Link>
               </li>
             </ul>
-          </div>
-          <div>
-            <Grid container justifyContent="flex-end" style={{ minWidth: 480 }}>
+          </Grid>
+          <Grid item xs>
+            <Grid container justifyContent="flex-end" >
               <Grid item>
                 <Account />
               </Grid>
             </Grid>
-          </div>
-        </div>
+          </Grid>
+        </Grid>
+      </div>
       </nav>
     </div>
   );

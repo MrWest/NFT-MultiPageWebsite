@@ -112,7 +112,6 @@ const NetworkAlerts = ({ localProvider, userProvider, targetNetwork }) => {
   // You can warn the user if you would like them to be on a specific network
   const localChainId = localProvider?._network?.chainId;
   let selectedChainId = userProvider?.network?.chainId;
- console.log('xxx: ', localChainId, selectedChainId);
     let networkDisplay = "";
   if (localChainId && selectedChainId && localChainId !== selectedChainId) {
     const networkSelected = NETWORK(selectedChainId);
@@ -202,7 +201,7 @@ export default function Account() {
           </Grid>
         </Grid>
       </Grid> :
-      <Grid item>
+      <Grid item container alignItems="center">
         <ConnectionButton  text="Connect" onClick={loadWeb3Modal} />
       </Grid>
     }
