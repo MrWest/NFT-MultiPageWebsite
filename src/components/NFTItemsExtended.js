@@ -6,6 +6,7 @@ import Address from './Address';
 import AddressInput from './AddressInput';
 import Sell from './Sell';
 import { Box, Grid, Paper, Tab, Tabs } from "@material-ui/core";
+import { BigNumber } from "@ethersproject/bignumber";
 
 const TabPanel = props => {
   const { children, value, index, ...other } = props;
@@ -40,7 +41,7 @@ function a11yProps(index) {
 const NFTItem = ({ classes, collectible, writeContracts, userProvider, address,
    transferToAddresses, approveAddresses, setTransferToAddresses, setApproveAddresses, tx,
    mainnetProvider, blockExplorer }) =>  {
-          const id = collectible.id.toNumber();
+          const id = BigNumber.from(collectible.id).toNumber();
           const [ selectedIndex, setSelectedIndex] = useState(0);
           const handleTabIndexChange = (event, newValue) =>  setSelectedIndex(newValue);
         return (

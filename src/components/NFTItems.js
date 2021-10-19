@@ -4,9 +4,7 @@ import { Button, Tabs } from "antd";
 import "antd/dist/antd.css";
 import { useUserAddress } from "eth-hooks";
 import { useDispatch, useSelector } from 'react-redux';
-import Address from './Address';
-import AddressInput from './AddressInput';
-import Sell from './Sell';
+import { BigNumber } from "@ethersproject/bignumber";
 import { Transactor } from "../helpers";
 import {
 useContractLoader,
@@ -99,7 +97,7 @@ const NFTItems = () => {
 
           try {
             const jsonManifest = JSON.parse(jsonManifestBuffer.toString());
-            console.log("jsonManifest", jsonManifest);
+            console.log("jsonManifest", jsonManifest, tokenId.toNumber());
             
             collectibleUpdate.push({ id: tokenId, uri: tokenURI, owner: address, ...jsonManifest });
             
@@ -137,7 +135,7 @@ const NFTItems = () => {
         </Grid>
         {collectibles.map(collectible => (
           <NFTItem
-          key={collectible.id.toNumber()} 
+          key={BigNumber.from(collectible.id).toNumber()} 
           classes={classes}
           collectible={collectible} 
           writeContracts={writeContracts}

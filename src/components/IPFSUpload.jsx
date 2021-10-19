@@ -22,6 +22,9 @@ export default function IPFSUpload(props) {
       trait_type: "Eyes",
       value: "googly",
     },
+    {
+      key: "Stamina"
+    }
   ]});
   const [sending, setSending] = useState();
   const [ipfsHash, setIpfsHash] = useState();
